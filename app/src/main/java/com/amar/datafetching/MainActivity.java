@@ -1,6 +1,9 @@
 package com.amar.datafetching;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -17,11 +20,15 @@ import com.google.gson.GsonBuilder;
 public class MainActivity extends AppCompatActivity {
 
     private static final String URL = "https://api.github.com/users";
+    RecyclerView recycle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        recycle = findViewById(R.id.recyclerView);
+        recycle.setLayoutManager(new LinearLayoutManager(this));
+        recycle.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.VERTICAL));
 
         StringRequest request = new StringRequest(URL, new Response.Listener<String>() {
             @Override
@@ -31,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
                 GsonBuilder gsonBuilder = new GsonBuilder();
                 Gson gson = gsonBuilder.create();
                 User[] users =  gson.fromJson(response,User[].class);
+                recycle.setAdapter(new SingleUserAdapter(MainActivity.this,users));
             }
         }, new Response.ErrorListener() {
             @Override
